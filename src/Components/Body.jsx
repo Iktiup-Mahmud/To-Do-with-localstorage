@@ -1,26 +1,33 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Cards from './Cards';
 
 const Body = () => {
 
+    const [allData, setAllData] = useState([])
+
+
     const allTasksLS = () => {
-        let tasksFromLS = {}
-
+        let tasksFromLS = []
         const getAllTasksFromLS = localStorage.getItem('allTasks')
-
         if (getAllTasksFromLS) {
             tasksFromLS = JSON.parse(getAllTasksFromLS)
+            setAllData(() => tasksFromLS)
         }
-
         return tasksFromLS
     }
 
-    let allDatasFromLS = allTasksLS()
 
-    // console.log(typeof (allDatasFromLS))
-    console.log((allDatasFromLS))
+    useEffect(() => {
+        allTasksLS()
+        // console.log(allData)
+        // console.log(1)
+    }, [])
 
-    // console.log(...allDatasFromLS, "a")
+    // setInterval(() => {
+    //     console.log(allData)
+    //     allTasksLS()
+    // }, 2000)
+
 
     const handelSubmit = (e) => {
         e.preventDefault()
@@ -31,15 +38,17 @@ const Body = () => {
 
         const aTask = { name: task, time: time, isDone: isCheck }
 
-        const allTasksForSet = [...allDatasFromLS, aTask]
+        const allTasksForSet = [...allData, aTask]
 
         // if(aTask) {
         // const lastArrayofTasks = 
         localStorage.setItem('allTasks', JSON.stringify(allTasksForSet))
+        allTasksLS()
+        // console.log(allData)
 
         e.target.reset()
 
-        return ''
+        // return ''
         // }
         // console.log(aTask)
     }
@@ -59,10 +68,17 @@ const Body = () => {
 
             {/* cards section */}
 
-            {/* <section>
+            <section className='grid grid-cols-3 gap-5 w-4/5 mx-auto'>
 
-            </section> */}
-            {/* <Cards /> */}
+                {
+                    allData.map((singleData, i) => {
+                        return <div key={i}>
+                            <Cards singleData={singleData} />
+                        </div>
+                    }
+                    )
+                }
+            </section>
 
         </div>
     );
